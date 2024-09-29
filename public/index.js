@@ -120,7 +120,7 @@ function saveInvoicePDF(invoiceText, totalAmount, customerPhone) {
 }
 
 function createWhatsAppLink(phoneNumber, fileName) {
-    const message = `Hello, please find your invoice here: localhost:3000/bills/${fileName}`;
+    const message = `Hello, please find your invoice here: https://cafe-s3t3.onrender.com/bills/${fileName}`;
     const whatsappLink = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
     window.open(whatsappLink, '_blank');
 }
