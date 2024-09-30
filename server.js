@@ -4,8 +4,7 @@ const bodyParser = require('body-parser');
 const path = require('path');
 const multer = require('multer'); // Multer for handling file uploads
 const fs = require('fs');
-const PDFDocument = require('pdfkit');
-const puppeteer = require('puppeteer');
+const pdf = require('html-pdf-node');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
@@ -88,30 +87,25 @@ app.post('/save-invoice', async (req, res) => {
     const filePath = path.join(__dirname, 'invoices', fileName);
 
     try {
-        // Launch Puppeteer to create a PDF from the HTML
-        const browser = await puppeteer.launch();
-        const page = await browser.newPage();
-        
-        // Set the HTML content
-        await page.setContent(htmlTemplate);
+        // Create a PDF from the HTML content using html-pdf-node
+        let options = { format: 'A4' };
+        let file = { content: htmlTemplate };
 
-        // Generate the PDF from the page
-        await page.pdf({
-            path: filePath,
-            format: 'A4',
-            printBackground: true,
+        // Generate PDF and save it to the file system
+        pdf.generatePdf(file, options).then(pdfBuffer => {
+            fs.writeFileSync(filePath, pdfBuffer); // Save the generated PDF to file
+
+            // Respond with the filename
+            res.json({ message: 'Invoice saved successfully!', fileName });
+        }).catch(err => {
+            console.error('Error generating PDF:', err);
+            res.status(500).json({ error: 'Error generating PDF' });
         });
-
-        await browser.close();
-
-        // Respond with the filename
-        res.json({ message: 'Invoice saved successfully!', fileName });
     } catch (err) {
-        console.error('Error generating PDF:', err);
-        res.status(500).json({ error: 'Error generating PDF' });
+        console.error('Error processing invoice:', err);
+        res.status(500).json({ error: 'Error processing invoice' });
     }
 });
-
 // Serve the PDF files
 app.use('/bills', express.static(invoicesDir));
 

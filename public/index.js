@@ -98,7 +98,6 @@ function generateInvoice() {
     saveInvoicePDF(selectedItems, totalAmount, customerPhone);
 }
 
-
 function saveInvoicePDF(invoiceText, totalAmount, customerPhone) {
     fetch('/save-invoice', {
         method: 'POST',
@@ -111,7 +110,13 @@ function saveInvoicePDF(invoiceText, totalAmount, customerPhone) {
     .then(data => {
         console.log('Invoice saved:', data);
         alert('Invoice saved successfully!');
-        createWhatsAppLink(customerPhone, data.fileName);
+        
+        // Check if customerPhone is provided and valid
+        if (validatePhoneNumber(customerPhone)) {
+            createWhatsAppLink(customerPhone, data.fileName);
+        } else {
+            alert('Invalid phone number. Please enter a valid phone number.');
+        }
     })
     .catch((error) => {
         console.error('Error:', error);
@@ -119,10 +124,24 @@ function saveInvoicePDF(invoiceText, totalAmount, customerPhone) {
     });
 }
 
+// Function to create WhatsApp link and open it
 function createWhatsAppLink(phoneNumber, fileName) {
     const message = `Hello, please find your invoice here: https://cafe-s3t3.onrender.com/bills/${fileName}`;
+    
+    // Ensure phone number is in correct format (country code and no special characters)
+    phoneNumber = phoneNumber.replace(/\D/g, ''); // Remove any non-digit characters
     const whatsappLink = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
+    
+    // Log the constructed link to debug any potential issues
+    console.log('Opening WhatsApp with link:', whatsappLink);
+    
     window.open(whatsappLink, '_blank');
+}
+
+// Simple validation to check if phone number is numeric and long enough
+function validatePhoneNumber(phoneNumber) {
+    const cleanedPhone = phoneNumber.replace(/\D/g, ''); // Remove non-digit characters
+    return cleanedPhone.length >= 10; // Ensure at least 10 digits
 }
 
 // Event listener for generating invoice

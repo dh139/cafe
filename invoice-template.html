@@ -38,12 +38,12 @@
         }
         table thead {
             background-color: #68C094;
-            color: white;
+            color: rgb(0, 0, 0);
         }
-        table, th, td {
+        th, td {
             padding: 12px;
             text-align: left;
-          
+            border: 1px solid black; /* Adding border to each cell */
         }
         th {
             font-size: 14px;
@@ -64,7 +64,7 @@
             text-align: right;
             margin-top: 20px;
         }
-        #tot{
+        #tot {
             color: #68C094;
         }
         .thank-you {
@@ -73,10 +73,6 @@
             color: #444;
             margin-top: 30px;
             font-size: 16px;
-        }
-        .emoji {
-            font-size: 24px;
-            vertical-align: middle;
         }
     </style>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
@@ -98,7 +94,7 @@
             </tbody>
         </table>
         <div class="total">
-            Total Amount: <span id="tot"> {{totalAmount}}</span> 
+            Total Amount: <span id="tot">{{totalAmount}}</span>
         </div>
         <p class="thank-you">Thank you for your purchase! 😊</p>
     </div>
